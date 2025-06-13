@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
-* generic study hash table
-*/
+
+//generic study hash table
+
 
 #define TAM 31
 
