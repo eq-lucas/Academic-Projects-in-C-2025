@@ -8,5 +8,3 @@ The focus is on energy efficiency and raw performance, with academic and profess
 
  My LinkedIn: [ www.linkedin.com/in/eq-lucas ]
 
- =======================================================================================
- 
