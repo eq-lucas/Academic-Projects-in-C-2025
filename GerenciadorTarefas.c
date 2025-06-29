@@ -81,7 +81,7 @@ int stringsIguais(const char *a, const char *b)
  * verificar se existe tal caracter na string e a qtdade
  * @param str string a ser verificada
  * @param c caracter a ser insepcionado
- * 
+ *
  */
 int strHaveCaracter(char *str, char c)
 {
@@ -100,23 +100,21 @@ int strHaveCaracter(char *str, char c)
  * truncar string com ".txt"
  * @param str string a ser truncada
  * @param truncar o ".txt"
- *@return 1 em caso de tamanho mairo q 36 caracteres
+ *@return 1 em caso de tamanho maior q 36 caracteres
  */
-int  truncarString(char *string, char *truncar)
+int truncarString(char *string, char *truncar)
 {
-if(MinhaStrlen(string)>36)
-{
-    printf("Texto muito longo, deve ter 36 caracteres no maximo!\n\n");
-    return 1;
-}
-
+    if (MinhaStrlen(string) > 36)
+    {
+        printf("Texto muito longo, deve ter 36 caracteres no maximo!\n\n");
+        return 1;
+    }
 
     char *str = string;
     int tamanhoTruncar = MinhaStrlen(truncar);
 
     while ((*str) != 0)
         str++;
-
 
     for (int i = 0; i < tamanhoTruncar; i++)
     {
@@ -140,30 +138,51 @@ void confirmarSaida(char *Sair)
     }
 }
 
-void OpenArquivo(FILE *arquivo, char *name)
+int OpenArquivo(FILE *arquivo, char *name)
 {
     int qtde = 0;
     char *nomecaminho = (char *)malloc(sizeof(char) * tam);
+
     do
     {
+        do
+        {
+            do
+            {
 
-        printf("\nDigite o nome do arquivo que deseja abrir: ");
+                printf("\nDigite o nome do arquivo que deseja abrir: ");
+                fgets(nomecaminho, (tam - 4), stdin);
+                limparBuffer();
 
-        fgets(nomecaminho, (tam - 4), stdin);
+                if (!(qtde = strHaveCaracter(nomecaminho, ' ')))
+                    break;
 
-        if (!(qtde = strHaveCaracter(nomecaminho, ' ')))
+                printf("O caracter [ %c ] apareceu: %dx\nNao pode haver nenhum\n", ' ', qtde);
+
+            } while (1);
+
+            if (!truncarString(nomecaminho, ".txt"))
+                break;
+
+        } while (1);
+
+        arquivo = fopen(nomecaminho, "r");
+
+        if (!(arquivo == NULL))
             break;
-
-        printf("O caracter [ %c ] apareceu: %dx\nNao pode haver nenhum\n", ' ', qtde);
+        printf(" -- Arquivo inexistente -- \n\nTente novamente, ou digite (1) para voltar ao menu inicial: ");
+        char sair;
+        if(sair=getchar() =='1')
+        return 1;
 
     } while (1);
 
-    truncarString(nomecaminho, ".txt");
-    arquivo = fopen(nomecaminho, "r");
-    if (arquivo == NULL)
-    {
-        printf("Arquivo inexistente, tente novamente\n\n");
-    }
+    return 0;
+}
+
+int CreateArquivo(FILE* arquivo,char*  nome)
+{
+    return 0;
 }
 
 void Visualizar()
@@ -186,6 +205,7 @@ int main()
 {
     FILE *arquivo;
     char *nome;
+    int retorno =0;
     printf("-- Gerenciador de tarefas v1.0 --\n\n");
 
     char Sair[5] = {0};
@@ -205,13 +225,18 @@ int main()
             switch (mode)
             {
             case 1:
-                OpenArquivo(arquivo, nome);
+                retorno = OpenArquivo(arquivo, nome);
+                mode = 0;
                 break;
             case 2:
-                CreateArquivo(arquivo, nome);
+                retorno = CreateArquivo(arquivo, nome);
+                mode = 0;
+
                 break;
             case 3:
                 confirmarSaida(Sair);
+                retorno =0;
+                mode = 0;
                 break;
 
             default:
@@ -219,7 +244,7 @@ int main()
                 mode = -1;
                 break;
             }
-        } while (mode == -1);
+        } while (mode == -1 || retorno ==1);
 
         if (!stringequal(Sair, "sim"))
             break;
