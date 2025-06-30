@@ -196,7 +196,7 @@ int OpenArquivo(FILE *arquivo, char *name)
                 if (!(qtde = strHaveCaracter(nomecaminho, ' ')))
                     break;
 
-                printf("O caracter [ %c ] apareceu: %dx\nNao pode haver nenhum\n", ' ', qtde);
+                printf("O caracter  %c] apareceu: %dx.\nNao pode haver nenhum.\n", ' ', qtde);
 
             } while (1);
 
@@ -213,7 +213,7 @@ int OpenArquivo(FILE *arquivo, char *name)
         char sair;
 
         printf("\n\t      -- Arquivo inexistente -- \n\n --Pressione [ENTER] para"
-               "voltar ao menu iniciar --\n\n  ");
+               " voltar ao menu iniciar --\n\n  ");
         do
         {
             if (sair = getchar() == '\n')
