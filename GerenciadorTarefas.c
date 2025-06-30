@@ -5,7 +5,7 @@
 
 void limparBuffer()
 {
-    char c;
+    int c;
     while ((c = getchar()) != '\n' && c != EOF)
         ;
 }
@@ -152,7 +152,8 @@ int OpenArquivo(FILE *arquivo, char *name)
 
                 printf("\nDigite o nome do arquivo que deseja abrir: ");
                 fgets(nomecaminho, (tam - 4), stdin);
-                limparBuffer();
+                if (MinhaStrlen(nomecaminho) == tam - 5 && nomecaminho[tam - 6])
+                    limparBuffer();
 
                 if (!(qtde = strHaveCaracter(nomecaminho, ' ')))
                     break;
@@ -170,9 +171,19 @@ int OpenArquivo(FILE *arquivo, char *name)
 
         if (!(arquivo == NULL))
             break;
-        printf(" -- Arquivo inexistente -- \n\nTente novamente, ou digite (1) para voltar ao menu inicial: ");
+
         char sair;
-        if(sair=getchar() =='1')
+
+        printf("\n\t      -- Arquivo inexistente -- \n\n --Pressione [ENTER] para voltar ao menu iniciar --\n\n  ");
+        do
+        {
+            if (sair = getchar() == '\n')
+            break;
+            limparBuffer();
+
+            printf("PRESSIONE [ENTER] ");
+        } while (1);
+
         return 1;
 
     } while (1);
@@ -180,7 +191,7 @@ int OpenArquivo(FILE *arquivo, char *name)
     return 0;
 }
 
-int CreateArquivo(FILE* arquivo,char*  nome)
+int CreateArquivo(FILE *arquivo, char *nome)
 {
     return 0;
 }
@@ -205,8 +216,8 @@ int main()
 {
     FILE *arquivo;
     char *nome;
-    int retorno =0;
-    printf("-- Gerenciador de tarefas v1.0 --\n\n");
+    int retorno = 0;
+    printf("\n-- Gerenciador de tarefas v1.0 --\n\n");
 
     char Sair[5] = {0};
     int mode = 0;
@@ -219,7 +230,7 @@ int main()
                    "2) Criar arquivo novo\n"
                    "3) Sair\n"
                    "\nDigite aqui: ");
-            scanf(" %d", &mode);
+            scanf("%d", &mode);
             limparBuffer();
 
             switch (mode)
@@ -235,16 +246,16 @@ int main()
                 break;
             case 3:
                 confirmarSaida(Sair);
-                retorno =0;
+                retorno = 0;
                 mode = 0;
                 break;
 
             default:
-                printf("Numero selecionado invalido.\n\n");
+                printf("\n -- Numero selecionado invalido. --\n");
                 mode = -1;
                 break;
             }
-        } while (mode == -1 || retorno ==1);
+        } while (mode == -1 || retorno == 1);
 
         if (!stringequal(Sair, "sim"))
             break;
@@ -259,7 +270,7 @@ int main()
                    "5) sair\n"
                    "\nDigite aqui: ");
 
-            scanf(" %d", &mode);
+            scanf("%d", &mode);
             limparBuffer();
 
             do
