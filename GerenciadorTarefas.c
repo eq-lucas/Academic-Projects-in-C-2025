@@ -138,6 +138,11 @@ void confirmarSaida(char *Sair)
     }
 }
 
+/** Abrir o arquivo com nome desejado
+ * @param arquivo variavel q recebe o endereco do arquivo com nome desejavle
+ * @return 1 se o arquivo nao for encontrado
+ *
+ */
 int OpenArquivo(FILE *arquivo, char *name)
 {
     int qtde = 0;
@@ -174,11 +179,12 @@ int OpenArquivo(FILE *arquivo, char *name)
 
         char sair;
 
-        printf("\n\t      -- Arquivo inexistente -- \n\n --Pressione [ENTER] para voltar ao menu iniciar --\n\n  ");
+        printf("\n\t      -- Arquivo inexistente -- \n\n --Pressione [ENTER] para"
+               "voltar ao menu iniciar --\n\n  ");
         do
         {
             if (sair = getchar() == '\n')
-            break;
+                break;
             limparBuffer();
 
             printf("PRESSIONE [ENTER] ");
@@ -193,7 +199,43 @@ int OpenArquivo(FILE *arquivo, char *name)
 
 int CreateArquivo(FILE *arquivo, char *nome)
 {
-    return 0;
+    return 1;
+}
+
+
+int OpenLast()
+{
+return 1;
+}
+
+
+/**
+ * @return 1 sempre pois o objetivo eh listar e voltar pro menu q estava
+ */
+int listarArquivo(char* caminhoDaLista)
+{
+    FILE* file= fopen(caminhoDaLista,"a+");
+    if(file==NULL)
+    {
+        printf("Ainda nao foram criados nenhum arquivo!\n\n");
+        return 1;
+    }
+    printf("\n -- Arquivos existentes --\n\n");
+    
+
+    int i=1;
+
+    char* string = (char*)malloc(sizeof(char)*tam);
+
+    while(fgets(string,tam,file) && string != NULL)
+    {
+    printf("%d| %s",i,string);
+    free(string);
+    i++;
+    }
+    printf("\n");
+
+    return 1; 
 }
 
 void Visualizar()
@@ -217,6 +259,9 @@ int main()
     FILE *arquivo;
     char *nome;
     int retorno = 0;
+    char* caminhoDaLista = "ListaDosArquivos.txt";
+    // 0: pode progesseguir,
+    // se 1: deve repetir o menu pois a condicao n foi atendida da funct
     printf("\n-- Gerenciador de tarefas v1.0 --\n\n");
 
     char Sair[5] = {0};
@@ -228,7 +273,9 @@ int main()
             printf("\nSelecione um modo:\n\n"
                    "1) Abrir arquivo existente\n"
                    "2) Criar arquivo novo\n"
-                   "3) Sair\n"
+                   "3) Abrir Ultimo arquivo\n"
+                   "4) Listar Arquivos existentes\n"
+                   "4) Sair\n"
                    "\nDigite aqui: ");
             scanf("%d", &mode);
             limparBuffer();
@@ -242,11 +289,13 @@ int main()
             case 2:
                 retorno = CreateArquivo(arquivo, nome);
                 mode = 0;
-
                 break;
             case 3:
-                confirmarSaida(Sair);
-                retorno = 0;
+                retorno = OpenLast(arquivo, nome);
+                mode = 0;
+                break;
+            case 4:
+                retorno = listarArquivo(caminhoDaLista);
                 mode = 0;
                 break;
 
