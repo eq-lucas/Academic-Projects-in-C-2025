@@ -157,6 +157,33 @@ int OpenArquivo(FILE *arquivo, char *name)
 
                 printf("\nDigite o nome do arquivo que deseja abrir: ");
                 fgets(nomecaminho, (tam - 4), stdin);
+
+                // se for com scanf n da o problema
+                // a questao eh q fgets le 36 caracteres indepednentemente, ate encontrar '\n'
+                // ou seja, se eu digitar casa, ele vai consumir todo o buffer: 'casa/n'
+                // entao colcoar um if para se o strlen de nomecaminho for maior q 35
+                // ja q ele le tam-4 = 36 e na vdd ele LE 36-1 caracteres deixando o ultimo (36)
+                // para o nulo q ele insere no final da stirng
+                // lembrando q o /n ele mantem da string! deve ser retirado ok
+                // logo criar uma funcao chamda RetirarCaracter q recebe string e um caracter
+                // logo fazer um if seria o ideal aqui
+                // --------------------------------------------------------------
+                // mas strlen>35 nunca ocorrea pq a string so guarda 35, e tb fazer ==35 n
+                // garante q tem coisa no buffer pq posso ter digitado exatamente 35 caracteres
+                // oq pode ser feito:
+                // tenho q colocar entao uma funcao propria onde ela verifica se tem strlen==35
+                // e no seu ultim ocaracter antes do nulo nao ser um /n oq logo signficia
+                // q o /n ficou no buffer
+                // if (strlen(nomecaminho) == 35 && nomecaminho[34] != '\n')
+                // e se atender logo fazer a cahamda da funcao limpar buffer
+                //
+                // if (strchr(nomecaminho, '\n') == NULL)
+                //
+                // Este código é mais robusto porque não se importa com o tamanho do buffer.
+                // Você pode mudar de 36 para 100 ou para 1000
+                //
+                // ou: if (strlen(nomecaminho) == VARIAVEL && nomecaminho[34] != '\n')
+
                 if (MinhaStrlen(nomecaminho) == tam - 5 && nomecaminho[tam - 6])
                     limparBuffer();
 
@@ -202,40 +229,40 @@ int CreateArquivo(FILE *arquivo, char *nome)
     return 1;
 }
 
-
 int OpenLast()
 {
-return 1;
+    return 1;
 }
-
 
 /**
  * @return 1 sempre pois o objetivo eh listar e voltar pro menu q estava
  */
-int listarArquivo(char* caminhoDaLista)
+int listarArquivo(char *caminhoDaLista)
 {
-    FILE* file= fopen(caminhoDaLista,"a+");
-    if(file==NULL)
+    FILE *file = fopen(caminhoDaLista, "a+");
+    if (file == NULL)
     {
         printf("Ainda nao foram criados nenhum arquivo!\n\n");
         return 1;
     }
     printf("\n -- Arquivos existentes --\n\n");
-    
 
-    int i=1;
+    int i = 1;
 
-    char* string = (char*)malloc(sizeof(char)*tam);
+    char *string = (char *)malloc(sizeof(char) * tam);
 
-    while(fgets(string,tam,file) && string != NULL)
+    while (fgets(string, tam, file) && string != NULL)
     {
-    printf("%d| %s",i,string);
-    free(string);
-    i++;
+        printf("%d| %s", i, string);
+        i++;
     }
-    printf("\n");
+    free(string);
+    //free dps pq o fgets vai no msm endereco q malloc alocou e SUBSTITUI, E NAO CRIA UM NOVO ENDERECO COM A NOVA STRING
+    // E OBVIO se os nomes fossem maiores q 40 caracteres seria um outro for com verificacao se o caacter atual
+    // eh um /n e se for, logo ai sim incrementar i e tudo mais... 
+    printf("\n\n--------------------------\n");
 
-    return 1; 
+    return 1;
 }
 
 void Visualizar()
@@ -259,7 +286,7 @@ int main()
     FILE *arquivo;
     char *nome;
     int retorno = 0;
-    char* caminhoDaLista = "ListaDosArquivos.txt";
+    char *caminhoDaLista = "ListaDosArquivos.txt";
     // 0: pode progesseguir,
     // se 1: deve repetir o menu pois a condicao n foi atendida da funct
     printf("\n-- Gerenciador de tarefas v1.0 --\n\n");
