@@ -126,15 +126,21 @@ int truncarString(char *string, char *truncar)
     return 0;
 }
 
-void confirmarSaida(char *Sair)
+/** funcao para confirmar se quer sair
+ * @param sair a string a ser digitada 'sim'
+ * @return 1 se nao quer sair
+ */
+int confirmarSaida(char *Sair)
 {
     while (1)
     {
-        printf("\nDigite 'sim' para sair: ");
+        printf("\nDigite 'sim' para sair, ou 'nao' para voltar: ");
         scanf(" %4s", Sair);
         limparBuffer();
         if (!stringequal(Sair, "sim"))
-            break;
+            return 0;
+        if (!stringequal(Sair, "nao"))
+            return 1;
     }
 }
 
@@ -257,9 +263,9 @@ int listarArquivo(char *caminhoDaLista)
         i++;
     }
     free(string);
-    //free dps pq o fgets vai no msm endereco q malloc alocou e SUBSTITUI, E NAO CRIA UM NOVO ENDERECO COM A NOVA STRING
-    // E OBVIO se os nomes fossem maiores q 40 caracteres seria um outro for com verificacao se o caacter atual
-    // eh um /n e se for, logo ai sim incrementar i e tudo mais... 
+    // free dps pq o fgets vai no msm endereco q malloc alocou e SUBSTITUI, E NAO CRIA UM NOVO ENDERECO COM A NOVA STRING
+    //  E OBVIO se os nomes fossem maiores q 40 caracteres seria um outro for com verificacao se o caacter atual
+    //  eh um /n e se for, logo ai sim incrementar i e tudo mais...
     printf("\n\n--------------------------\n");
 
     return 1;
@@ -292,7 +298,7 @@ int main()
     printf("\n-- Gerenciador de tarefas v1.0 --\n\n");
 
     char Sair[5] = {0};
-    int mode = 0;
+    char mode = '0';
     do
     {
         do
@@ -300,38 +306,44 @@ int main()
             printf("\nSelecione um modo:\n\n"
                    "1) Abrir arquivo existente\n"
                    "2) Criar arquivo novo\n"
-                   "3) Abrir Ultimo arquivo\n"
-                   "4) Listar Arquivos existentes\n"
-                   "4) Sair\n"
+                   "3) Abrir ultimo arquivo\n"
+                   "4) Listar arquivos existentes\n"
+                   "------------------------\n"
+                   "[ENTER] para  Sair\n"
                    "\nDigite aqui: ");
-            scanf("%d", &mode);
-            limparBuffer();
+            mode = fgetc(stdin);
+            if (mode != '\n')
+                limparBuffer();
 
             switch (mode)
             {
-            case 1:
+            case '1':
                 retorno = OpenArquivo(arquivo, nome);
-                mode = 0;
+                mode = '0';
                 break;
-            case 2:
+            case '2':
                 retorno = CreateArquivo(arquivo, nome);
-                mode = 0;
+                mode = '0';
                 break;
-            case 3:
+            case '3':
                 retorno = OpenLast(arquivo, nome);
-                mode = 0;
+                mode = '0';
                 break;
-            case 4:
+            case '4':
                 retorno = listarArquivo(caminhoDaLista);
-                mode = 0;
+                mode = '0';
+                break;
+            case '\n':
+                retorno = confirmarSaida(Sair);
+                mode = '0';
                 break;
 
             default:
                 printf("\n -- Numero selecionado invalido. --\n");
-                mode = -1;
+                mode = '1';
                 break;
             }
-        } while (mode == -1 || retorno == 1);
+        } while (mode == '1' || retorno == 1);
 
         if (!stringequal(Sair, "sim"))
             break;
@@ -346,38 +358,37 @@ int main()
                    "5) sair\n"
                    "\nDigite aqui: ");
 
-            scanf("%d", &mode);
-            limparBuffer();
+            mode = fgetc(stdin);
+            if (mode != '\n')
+                limparBuffer();
 
             do
             {
                 switch (mode)
                 {
-                case 1:
+                case '1':
                     Visualizar();
                     break;
-                case 2:
+                case '2':
                     Inserir();
                     break;
-                case 3:
+                case '3':
                     Atualizar();
                     break;
-                case 4:
+                case '4':
                     Deletar();
                     break;
-                case 5:
+                case '5':
                     printf("saindo deste arquivo...");
                     confirmarSaida(Sair);
                     break;
 
-                    break;
-
                 default:
                     printf("Numero selecionado invalido.\n\n");
-                    mode = -1;
+                    mode = '1';
                     break;
                 }
-            } while (mode == -1);
+            } while (mode == '1');
 
         } while (stringequal(Sair, "sim"));
 
