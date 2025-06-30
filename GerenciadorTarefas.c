@@ -264,8 +264,8 @@ int listarArquivo(char *caminhoDaLista)
     }
     free(string);
     // free dps pq o fgets vai no msm endereco q malloc alocou e SUBSTITUI, E NAO CRIA UM NOVO ENDERECO COM A NOVA STRING
-    //  E OBVIO se os nomes fossem maiores q 40 caracteres seria um outro for com verificacao se o caacter atual
-    //  eh um /n e se for, logo ai sim incrementar i e tudo mais...
+    // E OBVIO se os nomes fossem maiores q 40 caracteres seria um outro for com verificacao se o caacter atual
+    // eh um /n e se for, logo ai sim incrementar i e tudo mais...
     printf("\n\n--------------------------\n");
 
     return 1;
