@@ -394,6 +394,8 @@ int main()
     {
         do
         {
+            arquivo = NULL;
+            nome= NULL;
             NomeEscolhidoLista = NULL;
             printf("\nSelecione um modo:\n\n"
                    "1) Abrir arquivo existente\n"
@@ -423,12 +425,15 @@ int main()
                 break;
             case '4':
                 retorno = listarArquivo(caminhoDaLista, &NomeEscolhidoLista);
-                if (NomeEscolhidoLista != NULL)
+                if (NomeEscolhidoLista == NULL)
                 {
-                    printf("\nArquivo selecionado: [%s]\n", NomeEscolhidoLista);
-                    truncarString(NomeEscolhidoLista,".txt");
-                    arquivo=fopen(NomeEscolhidoLista,"a+");
+                    mode = '1';
+                    break;
                 }
+
+                truncarString(NomeEscolhidoLista, ".txt");
+                printf("\nArquivo selecionado: [%s]\n", NomeEscolhidoLista);
+                arquivo = fopen(NomeEscolhidoLista, "a+");
 
                 mode = '0';
                 break;
