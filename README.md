@@ -1,4 +1,4 @@
-# Academic-Projects-in-C
+# Academic-Projects-in-C 2024/2025
 
 Aimed at developing generic, scalable, and efficient algorithms in C.
 
