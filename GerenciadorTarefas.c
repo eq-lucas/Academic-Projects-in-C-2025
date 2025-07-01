@@ -144,6 +144,25 @@ int confirmarSaida(char *Sair)
     }
 }
 
+/** funcao para confirmar se quer sair
+ * @param frase a frase perguntando o que seria: 'sim' ou 'nao'.
+ * @return 1 se nao quer sair.
+ */
+int confirmarAlgo(char *frase)
+{
+    char Sair[5] = {0};
+    while (1)
+    {
+        printf("%s", frase);
+        scanf(" %4s", Sair);
+        limparBuffer();
+        if (!stringequal(Sair, "sim"))
+            return 0;
+        if (!stringequal(Sair, "nao"))
+            return 1;
+    }
+}
+
 /** Abrir o arquivo com nome desejado
  * @param arquivo variavel q recebe o endereco do arquivo com nome desejavle
  * @return 1 se o arquivo nao for encontrado
@@ -241,9 +260,54 @@ int OpenLast()
 }
 
 /**
+ * funcao para selecioanr uma linha e salvar a string(tamanho TAM) nela, de um arquivo com n linhas
+ * @param number a posicao
+ * @param caminhoDaLista o arquivo com o texto
+ * @param nomeEscolhido string q esta no malloc sera salva neste ponteiro
+ */
+int SelectIndice(int number, char *caminhoDaLista, char **nomeEscolhido)
+{
+    FILE *file = fopen(caminhoDaLista, "r");
+    if (file == NULL)
+        return 1;
+
+    int c; // por mais q char c pareca interessante, int c pois fgetc retorna um numero int como eof = -1
+
+    for (int i = 1; i < number; i++)
+    {
+        while ((c = fgetc(file)) != '\n' && c != EOF)
+        {
+        }
+    }
+
+    char *string = (void *)malloc(sizeof(char) * tam);
+    if (string == NULL)
+    {
+        fclose(file);
+        return 1;
+    }
+    fgets(string, (tam - 4), file);
+    if (string == NULL)
+    {
+        free(string);
+        fclose(file);
+        return 1;
+    }
+    int len = MinhaStrlen(string);
+    if (len > 0 && string[len - 1] == '\n')
+        string[len - 1] = 0;
+
+    *nomeEscolhido = string;
+
+    fclose(file);
+
+    return 0;
+}
+
+/**
  * @return 1 sempre pois o objetivo eh listar e voltar pro menu q estava
  */
-int listarArquivo(char *caminhoDaLista)
+int listarArquivo(char *caminhoDaLista, char **NomeEscolhidoLista)
 {
     FILE *file = fopen(caminhoDaLista, "a+");
     if (file == NULL)
@@ -268,7 +332,33 @@ int listarArquivo(char *caminhoDaLista)
     // eh um /n e se for, logo ai sim incrementar i e tudo mais...
     printf("\n\n--------------------------\n");
 
-    return 1;
+    if (!confirmarAlgo("\nDeseja selecionar algum?\n[sim] [nao]\nDigite aqui: "))
+    {
+        int number = 0;
+        char *nomeEscolhido = (char *)malloc(sizeof(char) * tam);
+        nomeEscolhido = NULL;
+        do
+        {
+            printf("\nDigite o numero desejado: ");
+            scanf(" %d", &number);
+            limparBuffer();
+            if (!(number > 0 && number <= i))
+            {
+                printf("\nDigite um indice valido!");
+                continue;
+            }
+            break;
+        } while (1);
+        fclose(file);
+        if (SelectIndice(number, caminhoDaLista, &nomeEscolhido))
+        {
+            printf("\nString nao encontrada!");
+            return 1;
+        }
+        *NomeEscolhidoLista = nomeEscolhido;
+    }
+
+    return 0;
 }
 
 void Visualizar()
@@ -292,6 +382,7 @@ int main()
     FILE *arquivo;
     char *nome;
     int retorno = 0;
+    char *NomeEscolhidoLista = NULL;
     char *caminhoDaLista = "ListaDosArquivos.txt";
     // 0: pode progesseguir,
     // se 1: deve repetir o menu pois a condicao n foi atendida da funct
@@ -303,6 +394,7 @@ int main()
     {
         do
         {
+            NomeEscolhidoLista = NULL;
             printf("\nSelecione um modo:\n\n"
                    "1) Abrir arquivo existente\n"
                    "2) Criar arquivo novo\n"
@@ -330,7 +422,14 @@ int main()
                 mode = '0';
                 break;
             case '4':
-                retorno = listarArquivo(caminhoDaLista);
+                retorno = listarArquivo(caminhoDaLista, &NomeEscolhidoLista);
+                if (NomeEscolhidoLista != NULL)
+                {
+                    printf("\nArquivo selecionado: [%s]\n", NomeEscolhidoLista);
+                    truncarString(NomeEscolhidoLista,".txt");
+                    arquivo=fopen(NomeEscolhidoLista,"a+");
+                }
+
                 mode = '0';
                 break;
             case '\n':
